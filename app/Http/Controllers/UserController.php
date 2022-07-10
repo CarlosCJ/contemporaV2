@@ -32,8 +32,26 @@ class UserController extends Controller
         return $datos;
     }
 
-    public function addUser(){
-        dd('Agregar');
+    public function addUser(Request $request){
+        // dd('Agregar');
+        $data_entrada = $request->input();
+        $token = '40adc5ce702bf6220a5fcb1f97b4011b0583ed15f667fcd072350aeefe2035cf';
+        $cli = new Client();
+        $peticion = $cli->request('POST', 'https://gorest.co.in/public/v2/users', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'Accept' => 'application/json',
+            ],
+            'form_params' => [
+                'name'      => $request->input('nombre'),
+                'email'     => $request->input('email'),
+                'gender'    => $request->input('genero'),
+                'status'    => $request->input('activo') === true ? 'active' : 'inactive',
+            ]
+        ]);
+        // return ['result' => 'Data has been saved.'];
+        return json_decode($peticion->getBody()->getContents());
+        // return json_decode($request);
     }
 
     public function updateUser(){
